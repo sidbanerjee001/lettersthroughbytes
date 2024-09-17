@@ -37,11 +37,8 @@ const TypingText: React.FC<TypingTextProps> = ({ text, speed }) => {
 const Home = () => {
   return (
     <div className={"h-screen w-screen flex justify-center items-center flex-col"}>
-      <TypingText text="Letters Through Bytes" speed={32} />
-      <div className={"flex flex-row"}>
-        <a href="/pages/home" className={"transition ease-in-out m-2 hover:text-green-700"}>[Read]</a>
-        <a href="https://github.com/sidbanerjee001/lettersthroughbytes" target="_blank" className={"transition ease-in-out m-2 hover:text-green-700"}>[Documentation]</a>
-      </div>
+      <TypingText text="the requested page wasn't found. maybe you followed a bad link, or hard-routed a malformed one. in either case there's nothing here." speed={25} />
+      <a href="/" className={"transition ease-in-out m-2 hover:text-green-700"}>[Home]</a>
     </div>
   );
 };
