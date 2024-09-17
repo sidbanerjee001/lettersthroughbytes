@@ -8,7 +8,6 @@ import { Toaster, toast } from 'sonner';
 import ReactQuill from 'react-quill';
 import { Delta } from 'quill/core';
 import 'react-quill/dist/quill.snow.css';
-import 'react-quill/dist/quill.bubble.css';
 
 import supabase from '@/app/utils/supabase/client';
 
@@ -78,6 +77,12 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
     ret += "</p>";
     if (ret != '<p><br /></p>') {
       deployResponse('sid_content', {id: title, order: 1, author: author, content: ret});
+      toast('response registered :)', {
+        action: {
+          label: 'close',
+          onClick: () => toast.dismiss()
+        },
+      })
     } else {
       toast('type a response first!', {
         action: {
@@ -97,13 +102,6 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
       .insert(values);
     if (error) {
       toast('response failed :( are you signed in?', {
-        action: {
-          label: 'close',
-          onClick: () => toast.dismiss()
-        },
-      })
-    } else {
-      toast('response registered :)', {
         action: {
           label: 'close',
           onClick: () => toast.dismiss()

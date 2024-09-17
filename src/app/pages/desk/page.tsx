@@ -1,14 +1,18 @@
 'use client';
-
-import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic'
 
 import LetterEditor from "@/app/components/LetterEditor";
+ 
+const DynamicComponentWithNoSSR = dynamic(
+  () => import('@/app/components/LetterEditor'),
+  { ssr: false }
+)
 
 const Desk = () => {
 
     return (
         <>
-            <LetterEditor author={"sid"}/>
+            <DynamicComponentWithNoSSR author={'sid'}/>
         </>
     );
 
