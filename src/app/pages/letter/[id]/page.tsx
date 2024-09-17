@@ -109,8 +109,8 @@ export default function Letter ( { params }: {params: {id: string}}) {
       if (p2 >= responses.length) {
         orderedContent.push(
           <div key={content[p1].content} className={"flex flex-row"}>
-            <div className={"mr-10 w-5 text-blue-800"}>[{content[p1].author}]</div>
-            <div className={`ml-8 mb-5 text-blue-800`} key={`sid-${p1}`}>
+            <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
+            <div className={`mb-5 text-blue-800`} key={`sid-${p1}`}>
                 <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
             </div>
           </div>
@@ -119,8 +119,8 @@ export default function Letter ( { params }: {params: {id: string}}) {
       } else if (p1 >= content.length) {
         orderedContent.push(
           <div key={responses[p2].content} className={"flex flex-row"}>
-            <div className={"mr-10 w-5 text-green-700"}>[{responses[p2].author}]</div>
-            <div className={`ml-8 mb-5 text-green-700`} key={`adr-${p2}`}>
+            <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
+            <div className={`mb-5 text-green-700`} key={`adr-${p2}`}>
                 <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
             </div>
           </div>
@@ -133,8 +133,8 @@ export default function Letter ( { params }: {params: {id: string}}) {
         if (c_date < r_date){
           orderedContent.push(
             <div key={content[p1].content} className={"flex flex-row"}>
-              <div className={"mr-10 w-5 text-blue-800"}>[{content[p1].author}]</div>
-              <div className={`ml-8 mb-5 text-blue-800`} key={`sid-${p1}`}>
+              <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
+              <div className={`mb-5 text-blue-800`} key={`sid-${p1}`}>
                   <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
               </div>
             </div>
@@ -143,8 +143,8 @@ export default function Letter ( { params }: {params: {id: string}}) {
         } else {
           orderedContent.push(
             <div key={responses[p2].content} className={"flex flex-row"}>
-              <div className={"mr-10 w-5 text-green-700"}>[{responses[p2].author}]</div>
-              <div className={`ml-8 mb-5 text-green-700`} key={`adr-${p2}`}>
+              <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
+              <div className={`ml-4 mb-5 text-green-700`} key={`adr-${p2}`}>
                   <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
               </div>
             </div>
@@ -174,10 +174,13 @@ export default function Letter ( { params }: {params: {id: string}}) {
   }
 
   return (
-    <div className={"p-10 w-1/2 m-auto"}>
-        {renderContentInOrder()}
-        <hr className={"mt-4 mb-4"}/>
-        <QuillEditor id={params.id} order={getNextOrder()} author={sessionStorage.getItem('author')!}/>
-    </div>
+    <>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+      <div className={"p-10 sm:w-7/12 sm:text-base text-xs w-11/12 m-auto"}>
+          {renderContentInOrder()}
+          <hr className={"mt-4 mb-4"}/>
+          <QuillEditor id={params.id} order={getNextOrder()} author={sessionStorage.getItem('author')!}/>
+      </div>
+    </>
   );
 };
