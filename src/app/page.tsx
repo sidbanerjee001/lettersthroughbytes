@@ -39,6 +39,7 @@ const Home = () => {
       <TypingText text="Letters Through Bytes" speed={32} />
       <div className={"flex flex-row"}>
         <a href="/pages/home" className={"transition ease-in-out m-2 hover:text-green-700"}>[Read]</a>
+        <a href="/pages/desk" className={"transition ease-in-out m-2 hover:text-green-700"}>[Write]</a>
         <a href="https://github.com/sidbanerjee001/lettersthroughbytes" target="_blank" className={"transition ease-in-out m-2 hover:text-green-700"}>[Documentation]</a>
       </div>
     </div>
