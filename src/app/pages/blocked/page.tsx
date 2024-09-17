@@ -14,11 +14,11 @@ const Login = () => {
     if (password === process.env.NEXT_PUBLIC_ADMIN_AUTH_PASSWORD) {
       sessionStorage.setItem('authenticated', 'true');
       sessionStorage.setItem('author', 'sid');
-      router.push('/pages/home');
+      router.push('/');
     } else if (password === process.env.NEXT_PUBLIC_BASIC_AUTH_PASSWORD) {
       sessionStorage.setItem('authenticated', 'true');
       sessionStorage.setItem('author', 'adri');
-      router.push('/pages/home');
+      router.push('/');
     } else {
       setWrongPassword(true);
     }

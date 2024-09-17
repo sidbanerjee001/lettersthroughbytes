@@ -76,7 +76,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
 
     ret += "</p>";
     if (ret != '<p><br /></p>') {
-      deployResponse('sid_content', {id: title, order: 1, author: author, content: ret});
+      deployResponse(author+'_content', {id: title, order: 1, author: author, content: ret});
       toast('response registered :)', {
         action: {
           label: 'close',
@@ -124,7 +124,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
   };
 
   return (
-    <div className={"w-1/2 m-auto"}>
+    <div className={"m-auto sm:w-7/12 sm:text-base text-xs w-11/12"}>
       <Toaster position="bottom-center"/>
       <div className={"mt-8 mb-8 text-center"}><h2>Write a letter below.</h2></div>
       <hr className={"mt-10 mb-10"}/>
