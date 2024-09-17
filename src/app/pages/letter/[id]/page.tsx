@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
+import { useEffect, useState } from 'react';
 import QuillEditor from '@/app/components/TextEditor';
-import Markdown from 'react-markdown';
 
 import { useRouter } from 'next/navigation';
 
@@ -70,53 +71,35 @@ export default function Letter ( { params }: {params: {id: string}}) {
   if (loading) return <div className={"p-10 w-1/2 m-auto"}>Loading content...</div>;
   if (!content) return <p>No content found for this ID</p>;
 
-    const renderers = {
-        paragraph: ({ children }: any) => (
-        <p style={{ margin: '0', lineHeight: '1.5' }}>
-            {children}
-        </p>
-        ),
-        text: ({ value }: any) => (
-        <span>
-            {value.split('\n').map((line: string, index: number) => (
-            <>
-                {line}
-                {index < value.split('\n').length - 1 && <br />}
-            </>
-            ))}
-        </span>
-        ),
-    };
+  // const renderAlternatingContent = () => {
+  //   const maxLength = Math.max(content.length, responses.length);
+  //   const alternatingContent: JSX.Element[] = [];
 
-  const renderAlternatingContent = () => {
-    const maxLength = Math.max(content.length, responses.length);
-    const alternatingContent: JSX.Element[] = [];
+  //   for (let i = 0; i < maxLength; i++) {
+  //     if (i < content.length) {
+  //       alternatingContent.push(
+  //         <div key={content[i].content} className={"flex flex-row"}>
+  //           <div className={"mr-10 w-5 text-blue-800"}>[{content[i].author}]</div>
+  //           <div className={`ml-8 mb-5 text-blue-800`} key={`sid-${i}`}>
+  //               <div dangerouslySetInnerHTML={{__html: content[i]?.content}}></div>
+  //           </div>
+  //         </div>
+  //       );
+  //     }
+  //     if (i < responses.length) {
+  //       alternatingContent.push(
+  //         <div key={responses[i].content} className={"flex flex-row"}>
+  //           <div className={"mr-10 w-5 text-green-700"}>[{responses[i].author}]</div>
+  //           <div className={`ml-8 mb-5 text-green-700`} key={`adr-${i}`}>
+  //               <div dangerouslySetInnerHTML={{__html: responses[i]?.content}}></div>
+  //           </div>
+  //         </div>
+  //       );
+  //     }
+  //   }
 
-    for (let i = 0; i < maxLength; i++) {
-      if (i < content.length) {
-        alternatingContent.push(
-          <div key={content[i].content} className={"flex flex-row"}>
-            <div className={"mr-10 w-5 text-blue-800"}>[{content[i].author}]</div>
-            <div className={`ml-8 mb-5 text-blue-800`} key={`sid-${i}`}>
-                <div dangerouslySetInnerHTML={{__html: content[i]?.content}}></div>
-            </div>
-          </div>
-        );
-      }
-      if (i < responses.length) {
-        alternatingContent.push(
-          <div key={responses[i].content} className={"flex flex-row"}>
-            <div className={"mr-10 w-5 text-green-700"}>[{responses[i].author}]</div>
-            <div className={`ml-8 mb-5 text-green-700`} key={`adr-${i}`}>
-                <div dangerouslySetInnerHTML={{__html: responses[i]?.content}}></div>
-            </div>
-          </div>
-        );
-      }
-    }
-
-    return alternatingContent;
-  };
+  //   return alternatingContent;
+  // };
 
   const renderContentInOrder= () => {
     let p1 = 0;
@@ -144,8 +127,8 @@ export default function Letter ( { params }: {params: {id: string}}) {
         );
         p2 += 1;
       } else {
-        let c_date = new Date(content[p1].created_at);
-        let r_date = new Date(responses[p2].created_at);
+        const c_date = new Date(content[p1].created_at);
+        const r_date = new Date(responses[p2].created_at);
         console.log(c_date + " " + r_date);
         if (c_date < r_date){
           orderedContent.push(

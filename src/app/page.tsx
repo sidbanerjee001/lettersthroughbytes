@@ -1,6 +1,5 @@
 'use client'
 
-import { url } from "inspector";
 import { useEffect, useState } from "react";
 
 interface TypingTextProps {

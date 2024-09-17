@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+'use client';
+
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
+import React, { useRef } from 'react';
 
 import { Toaster, toast } from 'sonner';
-import { Button } from '@mui/material';
-import ReactQuill, { Quill } from 'react-quill';
+import ReactQuill from 'react-quill';
 import { Delta } from 'quill/core';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
@@ -31,8 +34,8 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
     async function handleGetContents() {
         const titleTextEditor = titleQuillRef.current?.getEditor();
         if (titleTextEditor) {
-            var newID = await fetchLatestID() + 1;
-            var title = titleTextEditor.getText().trimStart().trimEnd();
+            const newID = await fetchLatestID() + 1;
+            const title = titleTextEditor.getText().trimStart().trimEnd();
             deployResponse('letter_list', {id: newID, name: title});
         } 
 
@@ -74,7 +77,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
 
     ret += "</p>";
     if (ret != '<p><br /></p>') {
-      deployResponse('sid_content', {id: title, order: 1, author: "sid", content: ret});
+      deployResponse('sid_content', {id: title, order: 1, author: author, content: ret});
     } else {
       toast('type a response first!', {
         action: {

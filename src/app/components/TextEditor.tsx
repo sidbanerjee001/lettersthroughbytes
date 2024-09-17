@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
 
 import { Toaster, toast } from 'sonner';
-import { Button } from '@mui/material';
-import ReactQuill, { Quill } from 'react-quill';
+import ReactQuill from 'react-quill';
 import { Delta } from 'quill/core';
 import 'react-quill/dist/quill.snow.css';
 
@@ -82,37 +81,37 @@ const QuillEditor: React.FC<TextEditorProps> = ( {id, order, author} ) => {
   // Unused function to convert editor text to markdown compatible formatting.
   // Unused because it doesn't maintain newlines properly. Semantic HTML preferred.
   
-  function parseContentsToMarkdown(ops: Delta["ops"]) {
-    let ret = "";
-    for (let i = 0; i < ops.length; i++) {
-      let curr = "";
-      let isBold = false;
-      let isItalic = false;
-      if ("attributes" in ops[i]) {
-        isBold = "bold" in ops[i].attributes!;
-        isItalic = "italic" in ops[i].attributes!;
-      }
-      if (isBold) {
-        curr = curr.concat("**");
-      }
-      if (isItalic) {
-        curr = curr.concat("__");
-      }
+  // function parseContentsToMarkdown(ops: Delta["ops"]) {
+  //   let ret = "";
+  //   for (let i = 0; i < ops.length; i++) {
+  //     let curr = "";
+  //     let isBold = false;
+  //     let isItalic = false;
+  //     if ("attributes" in ops[i]) {
+  //       isBold = "bold" in ops[i].attributes!;
+  //       isItalic = "italic" in ops[i].attributes!;
+  //     }
+  //     if (isBold) {
+  //       curr = curr.concat("**");
+  //     }
+  //     if (isItalic) {
+  //       curr = curr.concat("__");
+  //     }
 
-      curr = curr.concat(ops[i].insert!.toString());
+  //     curr = curr.concat(ops[i].insert!.toString());
 
-      if (isItalic) {
-        curr = curr.concat("__");
-      }
-      if (isBold) {
-        curr = curr.concat("**");
-      }
-      ret = ret.concat(curr);
-    }
-    if (ret != '\n') {
-      deployResponse(ret);
-    }
-  }
+  //     if (isItalic) {
+  //       curr = curr.concat("__");
+  //     }
+  //     if (isBold) {
+  //       curr = curr.concat("**");
+  //     }
+  //     ret = ret.concat(curr);
+  //   }
+  //   if (ret != '\n') {
+  //     deployResponse(ret);
+  //   }
+  // }
 
   // Insert new row into relevant table.
 
