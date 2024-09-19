@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState } from 'react';
-import QuillEditor from '@/app/components/TextEditor';
 
 import { useRouter } from 'next/navigation';
 

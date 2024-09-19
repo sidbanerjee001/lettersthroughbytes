@@ -53,12 +53,12 @@ const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author} ) => {
       let isItalic = false;
       if (typeof ops[i].insert === 'object') {
         let imgWidth = -1;
-        let imgOrder = Number(getMostRecentImageID(title));
+        const imgOrder = Number(getMostRecentImageID(title));
         if ("attributes" in ops[i]) {
           imgWidth = Number(ops[i]["attributes"]!["width"]);
         }
-        let base64Data = ops[i].insert!["image"].match(/data:image\/[a-zA-Z]+;base64,(.*)$/)?.[1];
-        let imageBlob = base64ToBlob(base64Data, 'image/png');
+        const base64Data = ops[i].insert!["image"].match(/data:image\/[a-zA-Z]+;base64,(.*)$/)?.[1];
+        const imageBlob = base64ToBlob(base64Data, 'image/png');
 
         try {
           const imageUrl = await uploadToS3(imageBlob, title, imgOrder);
