@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState } from 'react';
@@ -8,6 +9,11 @@ import QuillEditor from '@/app/components/TextEditor';
 import { useRouter } from 'next/navigation';
 
 import supabase from '@/app/utils/supabase/client';
+
+const DynamicTextEditorNoSSR = dynamic(
+  () => import('@/app/components/TextEditor'),
+  { ssr: false }
+)
 
 interface Fragment {
     content: string;
@@ -110,7 +116,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
         orderedContent.push(
           <div key={content[p1].content} className={"flex flex-row"}>
             <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
-            <div className={`mb-5 text-blue-800`} key={`sid-${p1}`}>
+            <div className={`mb-5 w-full text-blue-800`} key={`sid-${p1}`}>
                 <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
             </div>
           </div>
@@ -120,7 +126,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
         orderedContent.push(
           <div key={responses[p2].content} className={"flex flex-row"}>
             <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
-            <div className={`mb-5 text-green-700`} key={`adr-${p2}`}>
+            <div className={`mb-5 w-full text-green-700`} key={`adr-${p2}`}>
                 <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
             </div>
           </div>
@@ -129,12 +135,11 @@ export default function Letter ( { params }: {params: {id: string}}) {
       } else {
         const c_date = new Date(content[p1].created_at);
         const r_date = new Date(responses[p2].created_at);
-        console.log(c_date + " " + r_date);
         if (c_date < r_date){
           orderedContent.push(
             <div key={content[p1].content} className={"flex flex-row"}>
               <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
-              <div className={`mb-5 text-blue-800`} key={`sid-${p1}`}>
+              <div className={`mb-5 w-full text-blue-800`} key={`sid-${p1}`}>
                   <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
               </div>
             </div>
@@ -144,7 +149,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
           orderedContent.push(
             <div key={responses[p2].content} className={"flex flex-row"}>
               <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
-              <div className={`ml-4 mb-5 text-green-700`} key={`adr-${p2}`}>
+              <div className={`ml-4 mb-5 w-full text-green-700`} key={`adr-${p2}`}>
                   <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
               </div>
             </div>
@@ -179,7 +184,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
       <div className={"p-10 sm:w-7/12 sm:text-base text-xs w-11/12 m-auto"}>
           {renderContentInOrder()}
           <hr className={"mt-4 mb-4"}/>
-          <QuillEditor id={params.id} order={getNextOrder()} author={sessionStorage.getItem('author')!}/>
+          <DynamicTextEditorNoSSR title={params.id} order={getNextOrder()} author={sessionStorage.getItem('author')!}/>
       </div>
     </>
   );

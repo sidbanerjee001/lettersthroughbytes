@@ -2,68 +2,107 @@ import React, { useRef } from 'react';
 
 import { Toaster, toast } from 'sonner';
 import ReactQuill from 'react-quill';
+import { Quill } from 'react-quill';
 import { Delta } from 'quill/core';
 import 'react-quill/dist/quill.snow.css';
+import ImageResize from 'quill-image-resize-module-react';
+
+Quill.register('modules/imageResize', ImageResize);
+
+import { uploadToS3, base64ToBlob, saveImageUrlToSupabase, getMostRecentImageID } from '../utils/utilFunctions';
 
 import supabase from '@/app/utils/supabase/client';
 
 interface TextEditorProps {
-  id: string;
+  title: string;
   order: number;
   author: string;
 }
 
-const QuillEditor: React.FC<TextEditorProps> = ( {id, order, author} ) => {
+const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author} ) => {
 
   const quillRef = useRef<ReactQuill>(null);
 
   const modules = {
     toolbar: [
       ['bold', 'italic'],
-      ['clean']
+      ['clean'],
+      ['image'],
     ],
     clipboard: {
       matchVisual: false,
-    }
+    },
+    imageResize: {
+      modules: ['Resize', 'DisplaySize']
+    },
   };
 
   const handleGetContents = () => {
     const editor = quillRef.current?.getEditor();
     if (editor) {
-      const contents = editor.getContents(); 
-      // parseContentsToMarkdown(contents.ops);
+      const contents = editor.getContents();
       parseContentsToSemanticHTML(contents.ops);
     }
   };
 
-  function parseContentsToSemanticHTML (ops: Delta["ops"]) {
+  async function parseContentsToSemanticHTML (ops: Delta["ops"]) {
     let ret = "<p>";
     for (let i = 0; i < ops.length; i++) {
       let curr = "";
       let isBold = false;
       let isItalic = false;
-      if ("attributes" in ops[i]) {
-        isBold = "bold" in ops[i].attributes!;
-        isItalic = "italic" in ops[i].attributes!;
-      }
-      if (isBold) {
-        curr = curr.concat("<b>");
-      }
-      if (isItalic) {
-        curr = curr.concat("<i>");
-      }
+      if (typeof ops[i].insert === 'object') {
+        let imgWidth = -1;
+        let imgOrder = Number(getMostRecentImageID(title));
+        if ("attributes" in ops[i]) {
+          imgWidth = Number(ops[i]["attributes"]!["width"]);
+        }
+        let base64Data = ops[i].insert!["image"].match(/data:image\/[a-zA-Z]+;base64,(.*)$/)?.[1];
+        let imageBlob = base64ToBlob(base64Data, 'image/png');
 
-      curr = curr.concat(ops[i].insert!.toString());
+        try {
+          const imageUrl = await uploadToS3(imageBlob, title, imgOrder);
+          await saveImageUrlToSupabase(title, imageUrl, imgOrder);
+          console.log('Image successfully uploaded and URL saved!');
 
-      if (isItalic) {
-        curr = curr.concat("</i>");
+          if (imgWidth === -1) {
+            curr = `</p> <br/> <img src="${imageUrl}" class="m-auto"></img> <br/> <p>`;
+          } else {
+            curr = `</p> <br/> <img src="${imageUrl}" width="${imgWidth}" class="m-auto"></img> <br/> <p>`;
+          }
+        } catch (error) {
+            console.log(error);
+            toast('error uploading image :( text sid!', {
+              action: {
+                label: 'close',
+                onClick: () => toast.dismiss()
+              },
+            })
+        }
+      } else {
+          if ("attributes" in ops[i]) {
+            isBold = "bold" in ops[i].attributes!;
+            isItalic = "italic" in ops[i].attributes!;
+          }
+          if (isBold) {
+            curr = curr.concat("<b>");
+          }
+          if (isItalic) {
+            curr = curr.concat("<i>");
+          }
+
+          curr = curr.concat(ops[i].insert!.toString());
+
+          if (isItalic) {
+            curr = curr.concat("</i>");
+          }
+          if (isBold) {
+            curr = curr.concat("</b>");
+          }
+          curr = curr.replace(/[\r\n]/g, "<br />");
+        }
+        ret = ret.concat(curr);
       }
-      if (isBold) {
-        curr = curr.concat("</b>");
-      }
-      curr = curr.replace(/[\r\n]/g, "<br />");
-      ret = ret.concat(curr);
-    }
 
     ret += "</p>";
     if (ret != '<p><br /></p>') {
@@ -78,47 +117,12 @@ const QuillEditor: React.FC<TextEditorProps> = ( {id, order, author} ) => {
     }
   }
 
-  // Unused function to convert editor text to markdown compatible formatting.
-  // Unused because it doesn't maintain newlines properly. Semantic HTML preferred.
-  
-  // function parseContentsToMarkdown(ops: Delta["ops"]) {
-  //   let ret = "";
-  //   for (let i = 0; i < ops.length; i++) {
-  //     let curr = "";
-  //     let isBold = false;
-  //     let isItalic = false;
-  //     if ("attributes" in ops[i]) {
-  //       isBold = "bold" in ops[i].attributes!;
-  //       isItalic = "italic" in ops[i].attributes!;
-  //     }
-  //     if (isBold) {
-  //       curr = curr.concat("**");
-  //     }
-  //     if (isItalic) {
-  //       curr = curr.concat("__");
-  //     }
-
-  //     curr = curr.concat(ops[i].insert!.toString());
-
-  //     if (isItalic) {
-  //       curr = curr.concat("__");
-  //     }
-  //     if (isBold) {
-  //       curr = curr.concat("**");
-  //     }
-  //     ret = ret.concat(curr);
-  //   }
-  //   if (ret != '\n') {
-  //     deployResponse(ret);
-  //   }
-  // }
-
   // Insert new row into relevant table.
 
   async function deployResponse(ret: string) {
     const { error } = await supabase
       .from(author + '_content')
-      .insert([{ id: id, order: order, author: author, content: ret }])
+      .insert([{ id: title, order: order, author: author, content: ret }])
     if (error) {
       toast('response failed :( are you signed in?', {
         action: {
