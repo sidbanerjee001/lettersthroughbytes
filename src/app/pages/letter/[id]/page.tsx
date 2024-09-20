@@ -112,21 +112,33 @@ export default function Letter ( { params }: {params: {id: string}}) {
     const orderedContent: JSX.Element[] = [];
     while (p1 < content.length || p2 < responses.length) {
       if (p2 >= responses.length) {
+        const d = new Date(content[p1].created_at);
         orderedContent.push(
           <div key={content[p1].content} className={"flex flex-row"}>
-            <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
+            <div className={"mr-10 w-3 text-blue-800"}>
+              <div>[{content[p1].author}]</div>
+            </div>
             <div className={`mb-5 w-full text-blue-800`} key={`sid-${p1}`}>
                 <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
+                <div className={"text-right text-sm"}>
+                  {(d.getMonth() + 1) + "-" + d.getDate() + "-" + d.getFullYear()} at
+                  {" " + (d.getHours() % 12 || 12) + ":" + d.getMinutes().toString().padStart(2, '0') + (d.getHours() >= 12 ? 'pm' : 'am')}
+                </div>
             </div>
           </div>
         );
         p1 += 1;
       } else if (p1 >= content.length) {
+        const d = new Date(responses[p2].created_at);
         orderedContent.push(
           <div key={responses[p2].content} className={"flex flex-row"}>
             <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
             <div className={`mb-5 w-full text-green-700`} key={`adr-${p2}`}>
                 <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
+                <div className={"text-right text-sm"}>
+                  {(d.getMonth() + 1) + "-" + d.getDate() + "-" + d.getFullYear()} at
+                  {" " + (d.getHours() % 12 || 12) + ":" + d.getMinutes().toString().padStart(2, '0') + (d.getHours() >= 12 ? 'pm' : 'am')}
+                </div>
             </div>
           </div>
         );
@@ -140,6 +152,10 @@ export default function Letter ( { params }: {params: {id: string}}) {
               <div className={"mr-10 w-3 text-blue-800"}>[{content[p1].author}]</div>
               <div className={`mb-5 w-full text-blue-800`} key={`sid-${p1}`}>
                   <div dangerouslySetInnerHTML={{__html: content[p1]?.content}}></div>
+                  <div className={"text-right text-sm"}>
+                  {(c_date.getMonth() + 1) + "-" + c_date.getDate() + "-" + c_date.getFullYear()} at
+                  {" " + (c_date.getHours() % 12 || 12) + ":" + c_date.getMinutes().toString().padStart(2, '0') + (c_date.getHours() >= 12 ? 'pm' : 'am')}
+                </div>
               </div>
             </div>
           );
@@ -148,8 +164,12 @@ export default function Letter ( { params }: {params: {id: string}}) {
           orderedContent.push(
             <div key={responses[p2].content} className={"flex flex-row"}>
               <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
-              <div className={`ml-4 mb-5 w-full text-green-700`} key={`adr-${p2}`}>
+              <div className={`mb-5 w-full text-green-700`} key={`adr-${p2}`}>
                   <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>
+                  <div className={"text-right text-sm"}>
+                  {(r_date.getMonth() + 1) + "-" + r_date.getDate() + "-" + r_date.getFullYear()} at
+                  {" " + (r_date.getHours() % 12 || 12) + ":" + r_date.getMinutes().toString().padStart(2, '0') + (r_date.getHours() >= 12 ? 'pm' : 'am')}
+                </div>
               </div>
             </div>
           );
