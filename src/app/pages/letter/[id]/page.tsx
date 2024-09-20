@@ -28,7 +28,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
   
   const router = useRouter();
 
-  const fetcher = async () => {
+  const fetchPage = async () => {
     const fetchContent = async () => {
       setLoading(true);
       const { data, error } = await supabase
@@ -69,7 +69,7 @@ export default function Letter ( { params }: {params: {id: string}}) {
 
   useEffect(() => {
     if (params.id) {
-      fetcher();
+      fetchPage();
     }
   }, [params.id]);
 

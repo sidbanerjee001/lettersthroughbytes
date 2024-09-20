@@ -20,28 +20,45 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
   const quillRef = useRef<ReactQuill>(null);
   const titleQuillRef = useRef<ReactQuill>(null);
 
-  const modules = {
-    toolbar: [
-      ['bold', 'italic'],
-      ['clean']
-    ],
-    clipboard: {
-      matchVisual: false,
+    const modules = {
+      toolbar: [
+        ['bold', 'italic'],
+        ['clean']
+      ],
+      clipboard: {
+        matchVisual: false,
+      }
+    };
+
+    function sendToast(message: string) {
+      toast(message, {
+        action: {
+          label: 'close',
+          onClick: () => toast.dismiss()
+        },
+      })
     }
-  };
 
     async function handleGetContents() {
         const titleTextEditor = titleQuillRef.current?.getEditor();
+        let cont = true;
         if (titleTextEditor) {
             const newID = await fetchLatestID() + 1;
             const title = titleTextEditor.getText().trimStart().trimEnd();
-            deployResponse('letter_list', {id: newID, name: title});
+            if (title === "") {
+              cont = false;
+              sendToast('enter a title first!');
+            } else {
+              deployResponse('letter_list', {id: newID, name: title});
+            }
         } 
 
-        const editor = quillRef.current?.getEditor();
-        if (editor) {
-            const contents = editor.getContents(); 
-            parseContentsToSemanticHTML(titleTextEditor!.getText(), contents.ops);
+        if (cont){ 
+          const editor = quillRef.current?.getEditor();
+          if (editor) {
+              const contents = editor.getContents(); 
+              parseContentsToSemanticHTML(titleTextEditor!.getText(), contents.ops);
+          }
         }
     };
 
@@ -77,19 +94,9 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
     ret += "</p>";
     if (ret != '<p><br /></p>') {
       deployResponse(author+'_content', {id: title, order: 1, author: author, content: ret});
-      toast('response registered :)', {
-        action: {
-          label: 'close',
-          onClick: () => toast.dismiss()
-        },
-      })
+      sendToast('response registered :)');
     } else {
-      toast('type a response first!', {
-        action: {
-          label: 'close',
-          onClick: () => toast.dismiss()
-        },
-      })
+      sendToast('response failed :(');
     }
   }
 
@@ -101,12 +108,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
       .from(table)
       .insert(values);
     if (error) {
-      toast('response failed :( are you signed in?', {
-        action: {
-          label: 'close',
-          onClick: () => toast.dismiss()
-        },
-      })
+      sendToast('response failed :(');
     }
   }
 
