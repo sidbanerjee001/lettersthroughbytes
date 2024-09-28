@@ -21,7 +21,7 @@ interface Fragment {
     created_at: string;
   }
 
-export default function Letter ( { params }: {params: {id: string, title: string}}) {
+export default function Letter ( { params }: {params: {id: string, name: string}}) {
   const [content, setContent] = useState<Fragment[]>([]);
   const [responses, setResponses] = useState<Fragment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -54,7 +54,7 @@ export default function Letter ( { params }: {params: {id: string, title: string
       const { data, error } = await supabase
         .from('adri_content')
         .select('content, order, author, created_at')
-        .eq('id', params.id)
+        .eq('url', params.id)
         .order('order', { ascending: true });
   
       if (error) {
@@ -186,12 +186,12 @@ export default function Letter ( { params }: {params: {id: string, title: string
     let ret = 0;
     if (sessionStorage.getItem('author') === 'sid') {
         if (content.length == 0) {
-          return 0;
+          return 1;
         }
         ret = content[content.length-1].order + 1;
     } else {
         if (responses.length == 0) {
-          return 0;
+          return 1;
         }
         ret = responses[responses.length-1]?.order + 1;
     }
@@ -204,7 +204,7 @@ export default function Letter ( { params }: {params: {id: string, title: string
       <div className={"p-10 sm:w-7/12 sm:text-base text-xs w-11/12 m-auto"}>
           {renderContentInOrder()}
           <hr className={"mt-4 mb-4"}/>
-          <DynamicTextEditorNoSSR title={params.title} order={getNextOrder()} url={params.id} author={sessionStorage.getItem('author')!}/>
+          <DynamicTextEditorNoSSR title={params.name} order={getNextOrder()} url={params.id} author={sessionStorage.getItem('author')!}/>
       </div>
     </>
   );

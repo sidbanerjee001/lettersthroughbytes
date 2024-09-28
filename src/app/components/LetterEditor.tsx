@@ -42,6 +42,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
     async function handleGetContents() {
         const titleTextEditor = titleQuillRef.current?.getEditor();
         let cont = true;
+        let stripped_url = "";
         if (titleTextEditor) {
             const newID = await fetchLatestID() + 1;
             const title = titleTextEditor.getText().trimStart().trimEnd();
@@ -49,7 +50,8 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
               cont = false;
               sendToast('enter a title first!');
             } else {
-              deployResponse('letter_list', {id: newID, name: title});
+              stripped_url = title.replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+              deployResponse('letter_list', {id: newID, name: title, url: stripped_url});
             }
         } 
 
@@ -57,12 +59,12 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
           const editor = quillRef.current?.getEditor();
           if (editor) {
               const contents = editor.getContents(); 
-              parseContentsToSemanticHTML(titleTextEditor!.getText(), contents.ops);
+              parseContentsToSemanticHTML(titleTextEditor!.getText(), contents.ops, stripped_url);
           }
         }
     };
 
-  function parseContentsToSemanticHTML (title: string, ops: Delta["ops"]) {
+  function parseContentsToSemanticHTML (title: string, ops: Delta["ops"], stripped_url: string) {
     let ret = "<p>";
     for (let i = 0; i < ops.length; i++) {
       let curr = "";
@@ -93,7 +95,7 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
 
     ret += "</p>";
     if (ret != '<p><br /></p>') {
-      deployResponse(author+'_content', {id: title, order: 1, author: author, content: ret});
+      deployResponse(author+'_content', {id: title, order: 1, author: author, content: ret, url: stripped_url});
       sendToast('response registered :)');
     } else {
       sendToast('response failed :(');

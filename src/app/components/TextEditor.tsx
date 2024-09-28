@@ -17,9 +17,10 @@ interface TextEditorProps {
   title: string;
   order: number;
   author: string;
+  url: string;
 }
 
-const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author} ) => {
+const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author, url} ) => {
 
   const quillRef = useRef<ReactQuill>(null);
 
@@ -122,8 +123,9 @@ const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author} ) => {
   async function deployResponse(ret: string) {
     const { error } = await supabase
       .from(author + '_content')
-      .insert([{ id: title, order: order, author: author, content: ret }])
+      .insert([{ id: title, order: order, author: author, content: ret, url: url }])
     if (error) {
+      console.log(error.message);
       toast('response failed :( are you signed in?', {
         action: {
           label: 'close',

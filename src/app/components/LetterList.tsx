@@ -4,13 +4,13 @@ import supabase from '../utils/supabase/client';
 
 export const LetterList: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [titles, setTitles] = useState<{ id: number, name: string }[]>([]);
+  const [titles, setTitles] = useState<{ id: number, name: string, url: string }[]>([]);
 
   useEffect(() => {
     const fetchTitles = async () => {
         setLoading(true);
         try {
-          const { data, error } = await supabase.from('letter_list').select('id, name');
+          const { data, error } = await supabase.from('letter_list').select('id, name, url');
           if (error) {
             throw error;
           }
@@ -30,7 +30,7 @@ export const LetterList: React.FC = () => {
     <ul>
       {titles.map((row) => (
         <li key={row.id} className={"mb-3"}>
-          <Link className={"transition ease-in-out text-black hover:text-green-700"} href={`/pages/letter/${row.name}`}>
+          <Link className={"transition ease-in-out text-black hover:text-green-700"} href={`/pages/letter/${row.url}/${row.name}`}>
             [{row.name}]
           </Link>
         </li>
