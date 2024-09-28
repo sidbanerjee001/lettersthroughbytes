@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 
 import { useEffect, useState } from 'react';
 
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 import supabase from '@/app/utils/supabase/client';
 
@@ -26,7 +26,7 @@ export default function Letter ( { params }: {params: {id: string, name: string}
   const [responses, setResponses] = useState<Fragment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   
-  const router = useRouter();
+//   const router = useRouter();
 
   const fetchPage = async () => {
     const fetchContent = async () => {
@@ -40,11 +40,6 @@ export default function Letter ( { params }: {params: {id: string, name: string}
       if (error) {
         console.error('Error fetching content:', error.message);
       } else {
-        console.log(params);
-        if (data.length == 0) {
-          router.push('/pages/404');
-          return;
-        }
         setContent(data || []);
       }
       setLoading(false);
