@@ -6,10 +6,15 @@ import React, { useRef } from 'react';
 
 import { Toaster, toast } from 'sonner';
 import ReactQuill from 'react-quill';
+import { Quill } from 'react-quill';
+import ImageResize from 'quill-image-resize-module-react';
 import { Delta } from 'quill/core';
 import 'react-quill/dist/quill.snow.css';
+Quill.register('modules/imageResize', ImageResize);
 
 import supabase from '@/app/utils/supabase/client';
+
+import { uploadToS3, base64ToBlob, saveImageUrlToSupabase, getMostRecentImageID } from '../utils/utilFunctions';
 
 interface TextEditorProps {
   author: string;
@@ -20,15 +25,19 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
   const quillRef = useRef<ReactQuill>(null);
   const titleQuillRef = useRef<ReactQuill>(null);
 
-    const modules = {
-      toolbar: [
-        ['bold', 'italic'],
-        ['clean']
-      ],
-      clipboard: {
-        matchVisual: false,
-      }
-    };
+  const modules = {
+    toolbar: [
+      ['bold', 'italic'],
+      ['clean'],
+      ['image'],
+    ],
+    clipboard: {
+      matchVisual: false,
+    },
+    imageResize: {
+      modules: ['Resize', 'DisplaySize']
+    },
+  };
 
     function sendToast(message: string) {
       toast(message, {
@@ -64,34 +73,65 @@ const LetterEditor: React.FC<TextEditorProps> = ( {author} ) => {
         }
     };
 
-  function parseContentsToSemanticHTML (title: string, ops: Delta["ops"], stripped_url: string) {
+  async function parseContentsToSemanticHTML (title: string, ops: Delta["ops"], stripped_url: string) {
     let ret = "<p>";
     for (let i = 0; i < ops.length; i++) {
       let curr = "";
       let isBold = false;
       let isItalic = false;
-      if ("attributes" in ops[i]) {
-        isBold = "bold" in ops[i].attributes!;
-        isItalic = "italic" in ops[i].attributes!;
-      }
-      if (isBold) {
-        curr = curr.concat("<b>");
-      }
-      if (isItalic) {
-        curr = curr.concat("<i>");
-      }
+      if (typeof ops[i].insert === 'object') {
+        let imgWidth = -1;
+        const imgOrder = Number(getMostRecentImageID(title));
+        if ("attributes" in ops[i]) {
+          imgWidth = Number(ops[i]["attributes"]!["width"]);
+        }
+        const base64Data = ops[i].insert!["image"].match(/data:image\/[a-zA-Z]+;base64,(.*)$/)?.[1];
+        const imageBlob = base64ToBlob(base64Data, 'image/png');
 
-      curr = curr.concat(ops[i].insert!.toString());
+        try {
+          const imageUrl = await uploadToS3(imageBlob, title, imgOrder);
+          await saveImageUrlToSupabase(title, imageUrl, imgOrder);
+          console.log('Image successfully uploaded and URL saved!');
 
-      if (isItalic) {
-        curr = curr.concat("</i>");
+          if (imgWidth === -1) {
+            curr = `</p> <br/> <img src="${imageUrl}" class="m-auto"></img> <br/> <p>`;
+          } else {
+            curr = `</p> <br/> <img src="${imageUrl}" width="${imgWidth}" class="m-auto"></img> <br/> <p>`;
+          }
+        } catch (error) {
+            console.log(error);
+            toast('error uploading image :( text sid!', {
+              action: {
+                label: 'close',
+                onClick: () => toast.dismiss()
+              },
+            })
+            return;
+        }
+      } else {
+          if ("attributes" in ops[i]) {
+            isBold = "bold" in ops[i].attributes!;
+            isItalic = "italic" in ops[i].attributes!;
+          }
+          if (isBold) {
+            curr = curr.concat("<b>");
+          }
+          if (isItalic) {
+            curr = curr.concat("<i>");
+          }
+
+          curr = curr.concat(ops[i].insert!.toString());
+
+          if (isItalic) {
+            curr = curr.concat("</i>");
+          }
+          if (isBold) {
+            curr = curr.concat("</b>");
+          }
+          curr = curr.replace(/[\r\n]/g, "<br />");
+        }
+        ret = ret.concat(curr);
       }
-      if (isBold) {
-        curr = curr.concat("</b>");
-      }
-      curr = curr.replace(/[\r\n]/g, "<br />");
-      ret = ret.concat(curr);
-    }
 
     ret += "</p>";
     if (ret != '<p><br /></p>') {

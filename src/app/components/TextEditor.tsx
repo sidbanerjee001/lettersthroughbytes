@@ -79,6 +79,7 @@ const QuillEditor: React.FC<TextEditorProps> = ( {title, order, author, url} ) =
                 onClick: () => toast.dismiss()
               },
             })
+            return;
         }
       } else {
           if ("attributes" in ops[i]) {
