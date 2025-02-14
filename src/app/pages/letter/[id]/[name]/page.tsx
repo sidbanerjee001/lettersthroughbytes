@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 // import { useRouter } from 'next/navigation';
 
 import supabase from '@/app/utils/supabase/client';
+import React from 'react';
 
 const DynamicTextEditorNoSSR = dynamic(
   () => import('@/app/components/TextEditor'),
@@ -127,7 +128,7 @@ export default function Letter ( { params }: {params: {id: string, name: string}
       } else if (p1 >= content.length) {
         const d = new Date(responses[p2].created_at);
         orderedContent.push(
-          <div key={responses[p2].content} className={"flex flex-row"}>
+          <div key={responses[p2].order} className={"flex flex-row"}>
             <div className={"mr-10 w-3 text-green-700"}>[{responses[p2].author}]</div>
             <div className={`mb-5 w-full text-green-700`} key={`adr-${p2}`}>
                 <div dangerouslySetInnerHTML={{__html: responses[p2]?.content}}></div>

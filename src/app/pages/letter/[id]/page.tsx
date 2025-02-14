@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import supabase from '@/app/utils/supabase/client';
+import React from 'react';
 
 const DynamicTextEditorNoSSR = dynamic(
   () => import('@/app/components/TextEditor'),
