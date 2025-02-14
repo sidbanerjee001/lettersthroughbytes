@@ -20,9 +20,9 @@ const Valentine = () => {
         <div className="w-[80%] lg:w-[50%] m-auto my-10">
             <h1>For my beautiful girl, Adrienne.</h1>
 
-            <p className="mt-10">A long time ago, I'd started compiling a list of the most beautiful songs I'd ever heard. Most of them came naturally to me, but I struggled to put into words exactly <i>why</i> I found them so beautiful. My prose often felt contrived—poetic for the sake of poetry—and devoid of depth. And then, almost magically so, when you returned to my arms, I was bequeathed with a striking standard of beauty, and the capability to express fascination properly. Experiencing you has given me a stronger vocabulary to define all things lovely and sweet; I have a better understanding of what is beautiful & meaningful to me.</p>
+            <p className="mt-10">A long time ago, I&apos;d started compiling a list of the most beautiful songs I&apos;d ever heard. Most of them came naturally to me, but I struggled to put into words exactly <i>why</i> I found them so beautiful. My prose often felt contrived—poetic for the sake of poetry—and devoid of depth. And then, almost magically so, when you returned to my arms, I was bequeathed with a striking standard of beauty, and the capability to express fascination properly. Experiencing you has given me a stronger vocabulary to define all things lovely and sweet; I have a better understanding of what is beautiful & meaningful to me.</p>
 
-            <p className="mt-10">You're aware that I think a lot, and deeply, about music. My grandest step forward lately has been realizing my passion for music and you are one and the same. I'm a simple man with a complex taste—but I know beautiful when I [see, hear] it. So here's a list of songs I find truly beautiful, songs I feel you in, songs that I hope will decorate our future together, forever.</p>
+            <p className="mt-10">You&apos;re aware that I think a lot, and deeply, about music. My grandest step forward lately has been realizing my passion for music and you are one and the same. I&apos;m a simple man with a complex taste—but I know beautiful when I [see, hear] it. So here&apos;s a list of songs I find truly beautiful, songs I feel you in, songs that I hope will decorate our future together, forever.</p>
 
             {data.map((value, index) => (
                 <div className="mt-10" key={index}>
@@ -47,7 +47,7 @@ const Valentine = () => {
                 </div>
             ))}
 
-            <p className="mt-10">Happy Valentine's Day!!!!!! {`:)))))) <3`}. My lovely lovely girl you make me soooooo happy sorry if this is too corny or awk but i reeeeeeeeally love you!!!!</p>
+            <p className="mt-10">Happy Valentine&apos;s Day!!!!!! {`:)))))) <3`}. My lovely lovely girl you make me soooooo happy sorry if this is too corny or awk but i reeeeeeeeally love you!!!!</p>
             <p className="mt-10">Sid.</p>
         </div>
       </>

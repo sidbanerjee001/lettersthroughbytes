@@ -68,7 +68,7 @@ export default function Letter ( { params }: {params: {id: string, name: string}
     if (params.id) {
       fetchPage();
     }
-  }, [params.id]);
+  }, [params.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <div className={"p-10 w-1/2 m-auto"}>Loading content...</div>;
   if (!content) return <p>No content found for this ID</p>;
